@@ -1,0 +1,187 @@
+{
+  "name": "Checklist AI API",
+  "nodes": [
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "id": "92f90aa1-c695-4254-ae2c-fedbbcc1a74b",
+      "name": "OpenAI Model",
+      "type": "@n8n/n8n-nodes-langchain.lmOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1640,
+        480
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "7yrvHB1aSijAAtQj",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchema": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"type\": \"array\",\n  \"items\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"question\": {\n        \"type\": \"number\"\n      },\n      \"done\": {\n        \"type\": \"boolean\"\n      }\n    },\n    \"required\": [\"question\", \"done\"]\n  }\n}"
+      },
+      "id": "602d5540-cff8-4489-8b97-ccde86e26b89",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.1,
+      "position": [
+        1800,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "id": "5c151b22-01f9-442d-b852-0b568be42e03",
+      "name": "Respond to Webhook :)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "checklist-ai-api",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "b2421ae4-8f1f-41c6-a9c5-0b63ddb49e99",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        1420,
+        300
+      ],
+      "webhookId": "26acbbf1-cb1f-4067-a572-aa080167c8bf"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Responde las siguientes preguntas con \"SI\" o \"NO\":\n{{ $json.body.questions.join('\\n') }}\n\n{{ $json.body.text }}\n",
+        "hasOutputParser": true
+      },
+      "id": "e8960904-b506-4984-a2ce-b434e184336a",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        1620,
+        300
+      ]
+    }
+  ],
+  "pinData": {
+    "Basic LLM Chain": [
+      {
+        "json": {
+          "output": [
+            {
+              "question": 0,
+              "done": true
+            },
+            {
+              "question": 1,
+              "done": true
+            },
+            {
+              "question": 2,
+              "done": true
+            },
+            {
+              "question": 3,
+              "done": true
+            },
+            {
+              "question": 4,
+              "done": true
+            },
+            {
+              "question": 5,
+              "done": true
+            },
+            {
+              "question": 6,
+              "done": false
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "connections": {
+    "OpenAI Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook :)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "38ebbb92-13ab-4a0f-805b-19b30a6b164f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53b18982d45223b2f7a1d525272b5f842ebdb7409560503e04b311e194d33723"
+  },
+  "id": "fGvEXWpqC0NIu6RY",
+  "tags": []
+}
