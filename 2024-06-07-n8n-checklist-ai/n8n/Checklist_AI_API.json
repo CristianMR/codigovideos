@@ -1,0 +1,341 @@
+{
+  "name": "Checklist AI API",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Revisar lista de requerimientos",
+        "height": 383.87670522625683,
+        "width": 759.6723520277884
+      },
+      "id": "41285e67-4359-4b62-81eb-00c4c42b1b6d",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Mejorar texto",
+        "height": 383.87670522625683,
+        "width": 759.6723520277884
+      },
+      "id": "ba151c00-97f8-4ece-8b3b-496fb4c4ae84",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        1120
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "id": "9413b810-4bdc-40cc-97a8-fc54ca759167",
+      "name": "OpenAI Model2",
+      "type": "@n8n/n8n-nodes-langchain.lmOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1820,
+        960
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "7yrvHB1aSijAAtQj",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchema": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"type\": \"array\",\n  \"items\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"question\": {\n        \"type\": \"number\"\n      },\n      \"done\": {\n        \"type\": \"boolean\"\n      }\n    },\n    \"required\": [\"question\", \"done\"]\n  }\n}"
+      },
+      "id": "64745601-81a6-4e46-b7ea-b7f914cf6b71",
+      "name": "Structured Output Parser2",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.1,
+      "position": [
+        1980,
+        960
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "id": "5261016b-941b-41ca-be7f-3b3ba7d515a1",
+      "name": "Respond to Webhook :)2",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2440,
+        1060
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "checklist-ai-api",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "c44f37fb-8363-4e3c-98b5-6e5ef62d2f1c",
+      "name": "Webhook2",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        780
+      ],
+      "webhookId": "26acbbf1-cb1f-4067-a572-aa080167c8bf"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Eres un escritor de clase mundial. Mejora el texto para que las respuestas a las siguientes preguntas sean \"SI\":\n{{ $json.body.questions.join('\\n') }}\n\n{{ $json.body.text }}\n",
+        "hasOutputParser": true
+      },
+      "id": "c4633747-f1ba-44c8-9092-bbf338a1f921",
+      "name": "Basic LLM Chain1",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        1820,
+        1180
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Responde las siguientes preguntas con \"SI\" o \"NO\":\n{{ $json.body.questions.join('\\n') }}\n\n{{ $json.body.text }}\n",
+        "hasOutputParser": true
+      },
+      "id": "f49f3706-2f28-4976-8a79-843e69f2acb9",
+      "name": "Basic LLM Chain2",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        1800,
+        780
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "checklist-ai-improve-api",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "26cef114-cc2c-4db5-83f1-c677675a4f8f",
+      "name": "Webhook1",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        1620,
+        1180
+      ],
+      "webhookId": "26acbbf1-cb1f-4067-a572-aa080167c8bf"
+    },
+    {
+      "parameters": {
+        "jsonSchema": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"improved-text\": {\n      \"type\": \"string\"\n    },\n    \"required\": [\"improved-text\"]\n  }\n}"
+      },
+      "id": "4e1872d5-7409-40bc-933a-81fb432b01d4",
+      "name": "Structured Output Parser1",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.1,
+      "position": [
+        2000,
+        1360
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "id": "8522aed5-a2b5-4908-ad52-2f8d03dfe852",
+      "name": "OpenAI Model",
+      "type": "@n8n/n8n-nodes-langchain.lmOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        1380
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "7yrvHB1aSijAAtQj",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Basic LLM Chain1": [
+      {
+        "json": {
+          "output": {
+            "improved-text": "Escena: Una persona, asistida por una avanzada inteligencia artificial culinaria, está delante de una mesa con ingredientes para una receta rápida y deliciosa. La voz en off, también generada por la AI, guía el proceso.\n\nPersona: \"¡Hola, TikTok! Hoy les voy a enseñar a hacer una pizza de sartén en solo 10 minutos con la ayuda de mi asistente AI, ChefBot.\"\n\n[Escena: Rápido montaje de ingredientes asistido por AI: tortilla de trigo, salsa de tomate, queso rallado, pepperoni y albahaca]\n\nPersona: \"Primero, ChefBot sugiere calentar la sartén a fuego medio. Luego, colocamos la tortilla y añadimos una capa de salsa de tomate.\"\n\n[Escena: Las manos, guiadas por las instrucciones precisas de ChefBot, extienden el queso rallado y colocan pepperoni]\n\nPersona: \"Extendemos queso rallado por encima y agregamos pepperoni según las recomendaciones de ChefBot. Tapamos y cocinamos por 5-7 minutos.\"\n\n[Escena: Persona mostrando la pizza lista, con el logo de ChefBot en una esquina]\n\nPersona: \"Y listo… una pizza deliciosa en minutos gracias a ChefBot. ¡Prueba y disfruta! No olvides seguirme para más recetas rápidas asistidas por AI.\"",
+            "required": {}
+          }
+        }
+      }
+    ],
+    "Basic LLM Chain2": [
+      {
+        "json": {
+          "output": [
+            {
+              "question": 0,
+              "done": true
+            },
+            {
+              "question": 1,
+              "done": true
+            },
+            {
+              "question": 2,
+              "done": true
+            },
+            {
+              "question": 3,
+              "done": true
+            },
+            {
+              "question": 4,
+              "done": true
+            },
+            {
+              "question": 5,
+              "done": true
+            },
+            {
+              "question": 6,
+              "done": false
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "connections": {
+    "OpenAI Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain2",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook2": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook :)2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain2": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook :)2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "8d750728-a8c7-4d21-a1d0-dbd11f7ad6db",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53b18982d45223b2f7a1d525272b5f842ebdb7409560503e04b311e194d33723"
+  },
+  "id": "fGvEXWpqC0NIu6RY",
+  "tags": []
+}
