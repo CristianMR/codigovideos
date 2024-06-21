@@ -1,0 +1,23 @@
+{
+  "name": "2024-06-08-n8n-checklist-ai",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsx index.ts"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "openai": "^4.49.1"
+  },
+  "devDependencies": {
+    "tsx": "^4.14.0"
+  }
+}
